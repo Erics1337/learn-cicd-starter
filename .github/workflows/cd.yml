@@ -20,3 +20,19 @@ jobs:
         run: |
           chmod +x ./scripts/buildprod.sh
           ./scripts/buildprod.sh
+
+      # Authenticate to Google Cloud using Workload Identity Federation
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      # Setup gcloud CLI - needed after auth for commands to work
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Submit the build to Google Cloud Build
+      - name: Build and Push Docker image via Cloud Build
+        run: |-
+          gcloud builds submit --tag us-central1-docker.pkg.dev/notely-455419/notely-ar-repo/notely:latest .
