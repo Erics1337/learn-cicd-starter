@@ -42,13 +42,7 @@ jobs:
         run: go install honnef.co/go/tools/cmd/staticcheck@latest
 
       - name: Check formatting
-        run: |
-          OUTPUT=$(gofmt -l .)
-          if [ -n "$OUTPUT" ]; then
-            echo "Go files must be formatted with gofmt:"
-            echo "$OUTPUT"
-            exit 1
-          fi
+        run: test -z $(go fmt ./...)
 
       - name: Check linting
         run: staticcheck ./...
