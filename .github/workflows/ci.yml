@@ -33,6 +33,18 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.23.0"
+          
+      - name: Install staticcheck
+        run: go install honnef.co/go/tools/cmd/staticcheck@latest
 
       - name: Check formatting
-        run: test -z $(go fmt ./...)
+        run: |
+          OUTPUT=$(go fmt ./...)
+          if [ -n "$OUTPUT" ]; then
+            echo "Go files must be formatted with gofmt:"
+            echo "$OUTPUT"
+            exit 1
+          fi
+
+      - name: Check linting
+        run: staticcheck ./...
